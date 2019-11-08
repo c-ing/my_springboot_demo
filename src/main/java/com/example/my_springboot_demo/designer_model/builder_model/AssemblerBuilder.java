@@ -1,4 +1,4 @@
-package com.example.my_springboot_demo.designer_model.builder_moder;
+package com.example.my_springboot_demo.designer_model.builder_model;
 
 /**
  * @Author: cdc
