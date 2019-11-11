@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
  * @Date: 2019/10/14 14:54
  * @Description:读取redis配置信息并装载
  */
-@Component
-@ConfigurationProperties(prefix = "applicate")
+//@Component
+//@ConfigurationProperties(prefix = "applicate")
 public class RedisProperties {
 
 
