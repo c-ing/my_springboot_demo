@@ -1,7 +1,10 @@
 package com.example.my_springboot_demo.redis;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -21,6 +24,9 @@ public class RedisService {
 
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 默认过期时长，单位：秒
@@ -128,5 +134,45 @@ public class RedisService {
      */
     public void persistKey(String key) {
         redisTemplate.persist(key);
+    }
+
+
+    /**
+     * 简单的分布式锁实现
+     * try lock
+     * @author piaoruiqing
+     * 链接：https://juejin.im/post/5ce5638ef265da1b91636a56
+     * @param key       lock key
+     * @param value     value
+     * @param timeout   timeout
+     * @param unit  	time unit
+     * @return
+     */
+    public Boolean tryLock(String key, String value, long timeout, TimeUnit unit) {
+
+        // 对应的redis的执行命令是：set dlock:test-try-lock a EX 10 NX
+        return redisTemplate.opsForValue().setIfAbsent(key, value, timeout, unit);
+    }
+
+    // 加锁方法实现, 满足自动解锁和重试
+    public DistributedLock acquire(String key, long timeout, int retries, long waitingTime) throws InterruptedException {
+        //锁值要保证唯一, 使用4位随机字符串+时间戳基本可满足需求
+        //注: UUID.randomUUID()在高并发情况下性能不佳.
+        final String value = RandomStringUtils.randomAlphanumeric(4) + System.currentTimeMillis(); // (一)
+        do {
+            //尝试加锁
+            Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(key, value, timeout, TimeUnit.MILLISECONDS); // (二)
+            if (result) {
+                return new RedisDistributedLock(stringRedisTemplate, key, value);
+            }
+            if (retries > NumberUtils.INTEGER_ZERO) {
+                TimeUnit.MILLISECONDS.sleep(waitingTime);
+            }
+            if(Thread.currentThread().isInterrupted()){
+                break;
+            }
+        } while (retries-- > NumberUtils.INTEGER_ZERO);
+
+        return null;
     }
 }

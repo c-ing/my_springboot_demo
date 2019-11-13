@@ -84,4 +84,6 @@ public class RedisTemplateService {
             return JSON.toJSONString(value);
         }
     }
+
+
 }

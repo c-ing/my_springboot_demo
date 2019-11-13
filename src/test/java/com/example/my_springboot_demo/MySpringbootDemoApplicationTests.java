@@ -1,5 +1,6 @@
 package com.example.my_springboot_demo;
 
+import com.example.my_springboot_demo.designer_model.builder_model.ComputerB;
 import com.example.my_springboot_demo.domain.UserVo;
 import com.example.my_springboot_demo.redis.RedisKeyUtil;
 import com.example.my_springboot_demo.redis.RedisService;
@@ -11,7 +12,10 @@ import org.springframework.data.redis.core.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import static com.sun.javafx.css.SizeUnits.EX;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -70,4 +74,30 @@ public class MySpringbootDemoApplicationTests {
 
 		System.out.println(valueOperations.get("test"));
 	}
+
+	@Test
+	public void testSetOperation() throws Exception {
+		UserVo userVo = new UserVo();
+		userVo.setAddress("北京");
+		userVo.setName("jantent");
+		userVo.setAge(23);
+
+		ComputerB computerB = new ComputerB.ComputerBuilder("主板","cpu","hd","电源","显卡").setMouse("鼠标").build() ;
+		ComputerB computerB1 = new ComputerB.ComputerBuilder("主板", "cpu", "hd", "power", "显卡").build();
+
+		setOperations.add("computerB:test", computerB, computerB1);
+		Set<Object> result = setOperations.members("user:test");
+		System.out.println(result);
+	}
+
+	@Test
+	public void testRedisDistributedLockJ() {
+		Boolean result = redisService.tryLock("dlock:test-try-lock", "a", 100, TimeUnit.SECONDS);
+		Boolean result2 = redisService.tryLock("dlock:test-try-lock", "a", 100, TimeUnit.SECONDS);
+		System.out.println("=-=--===============");
+		System.out.println(result + ", " + result2);
+
+	}
+
+
 }
