@@ -17,7 +17,7 @@ public class RedisCtrler {
     @Autowired
     private RedisTemplateService redisTemplateService;
 
-    @RequestMapping
+    @RequestMapping("/setRedisKey")
     public void setRedisKey(@RequestParam String key, @RequestParam String value) {
         Boolean result = redisTemplateService.set(key, value);
         System.out.println("设置redis的结果"+result);

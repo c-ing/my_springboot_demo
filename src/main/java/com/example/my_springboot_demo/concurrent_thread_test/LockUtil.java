@@ -21,4 +21,9 @@ public class LockUtil {
         }
        return lockMap.get(type);
     }
+
+    public void unLock(Lock lock) {
+	    lock.unlock();
+    }
+
 }

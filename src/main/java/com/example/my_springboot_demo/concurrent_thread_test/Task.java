@@ -6,6 +6,8 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @Author: cdc
@@ -22,17 +24,35 @@ public class Task implements Runnable {
 
     @Override
     public void run() {
+
+        Lock lock = null;
         try {
             // 等待所有任务准备就绪
             cyclicBarrier.await();
+             lock = LockUtil.getLock("test");
             // 测试内容
-            if(LockUtil.getLock("test").tryLock(LOCK_TIME, TimeUnit.SECONDS)){
+            if(lock.tryLock(LOCK_TIME, TimeUnit.SECONDS)){
                 System.out.println("ssss " + new Date());
                 System.out.println(Thread.currentThread());
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            lock.unlock();
+            //System.out.println(String.format("有%s个线程在保持锁",Integer.toString(getHoldCount(lock))));
+            System.out.println(String.format("有%s个线程在等待锁",Integer.toString(getQueueLength(lock))));
+
         }
+    }
+
+    public int getQueueLength(Lock lock) {
+        ReentrantLock reentrantLock = (ReentrantLock)lock;
+        return reentrantLock.getQueueLength();
+    }
+
+    public int getHoldCount(Lock lock) {
+        ReentrantLock reentrantLock = (ReentrantLock)lock;
+        return reentrantLock.getHoldCount();
     }
 
     public static void main(String[] args) {
@@ -45,7 +65,7 @@ public class Task implements Runnable {
         executorService.shutdown();
         while (!executorService.isTerminated()) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
