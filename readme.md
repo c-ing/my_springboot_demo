@@ -1,3 +1,5 @@
 分布式锁抽象类
 DistributedLock
 
+no_if_else
+使用策略模式+工厂模式去除代码的if elseif

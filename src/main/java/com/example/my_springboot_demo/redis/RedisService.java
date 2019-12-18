@@ -3,13 +3,14 @@ package com.example.my_springboot_demo.redis;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.Set;
+import javax.sound.midi.Soundbank;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,6 +28,8 @@ public class RedisService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+
 
     /**
      * 默认过期时长，单位：秒
@@ -174,5 +177,14 @@ public class RedisService {
         } while (retries-- > NumberUtils.INTEGER_ZERO);
 
         return null;
+    }
+
+    @Cacheable(value = "testCache:redisCache")
+    public List<Integer> redisCacheTest() {
+        System.out.println("======no cache==================");
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        return list;
     }
 }

@@ -2,13 +2,20 @@ package com.example.my_springboot_demo;
 
 import com.example.my_springboot_demo.designer_model.builder_model.ComputerB;
 import com.example.my_springboot_demo.domain.UserVo;
+import com.example.my_springboot_demo.no_if_else.UserType;
+import com.example.my_springboot_demo.no_if_else.V2.GoldStrategyV2;
+import com.example.my_springboot_demo.no_if_else.V2.StrategyFactory;
+import com.example.my_springboot_demo.no_if_else.V2.StrategyFactoryV2;
+import com.example.my_springboot_demo.no_if_else.V2.StrategyV2;
 import com.example.my_springboot_demo.redis.RedisKeyUtil;
 import com.example.my_springboot_demo.redis.RedisService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.*;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -19,6 +26,8 @@ import static com.sun.javafx.css.SizeUnits.EX;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@SpringBootTest(classes = MySpringbootDemoApplication.class)
 public class MySpringbootDemoApplicationTests {
 
 	@Autowired
@@ -44,6 +53,12 @@ public class MySpringbootDemoApplicationTests {
 
 	@Resource
 	private RedisService redisService;
+
+	@Autowired
+	private StrategyFactoryV2 strategyFactoryV2;
+
+	@Resource
+	private ApplicationContext applicationContext;
 
 	@Test
 	public void contextLoads() {
@@ -99,5 +114,21 @@ public class MySpringbootDemoApplicationTests {
 
 	}
 
+
+	@Test
+	public void testRedisCache() {
+		redisService.redisCacheTest();
+	}
+
+	@Test
+	public void strategyTest() {
+		StrategyFactoryV2 s = strategyFactoryV2;
+		System.out.println("+++++++++++++++");
+		StrategyV2 strategyV2 = s.getStrategyV2ByType(UserType.GOLD_VIP.getCode());
+		System.out.println("strategyMapV2:" +strategyV2);
+		strategyV2.compute(1000);
+		System.out.println("+++++++++++++++");
+
+	}
 
 }
