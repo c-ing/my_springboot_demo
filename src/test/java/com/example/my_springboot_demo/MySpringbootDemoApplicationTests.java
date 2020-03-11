@@ -3,8 +3,6 @@ package com.example.my_springboot_demo;
 import com.example.my_springboot_demo.designer_model.builder_model.ComputerB;
 import com.example.my_springboot_demo.domain.UserVo;
 import com.example.my_springboot_demo.no_if_else.UserType;
-import com.example.my_springboot_demo.no_if_else.V2.GoldStrategyV2;
-import com.example.my_springboot_demo.no_if_else.V2.StrategyFactory;
 import com.example.my_springboot_demo.no_if_else.V2.StrategyFactoryV2;
 import com.example.my_springboot_demo.no_if_else.V2.StrategyV2;
 import com.example.my_springboot_demo.redis.RedisKeyUtil;
@@ -21,8 +19,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import org.springframework.stereotype.Component;
 
-import static com.sun.javafx.css.SizeUnits.EX;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -128,6 +127,11 @@ public class MySpringbootDemoApplicationTests {
 		System.out.println("strategyMapV2:" +strategyV2);
 		strategyV2.compute(1000);
 		System.out.println("+++++++++++++++");
+		String[] classNames = applicationContext.getBeanNamesForAnnotation(Component.class);
+		for (String name : classNames) {
+			Class<?> type = applicationContext.getType(name);
+			boolean posSaleMapper = type.isAnnotationPresent(Component.class);
+		}
 
 	}
 
