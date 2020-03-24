@@ -81,6 +81,14 @@
 			<version>1.0-rc5</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.openjdk.jol/jol-core -->
+	<!--	<dependency>
+			<groupId>org.openjdk.jol</groupId>
+			<artifactId>jol-core</artifactId>
+
+		</dependency>-->
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
